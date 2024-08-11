@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # الخطوة الأولى: تنزيل الكود
+    - name: تنزيل الكود
+      uses: actions/checkout@v2
+
+    # الخطوة الثانية: إعداد بيئة Python لمشروع Django
+    - name: إعداد بيئة Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    # الخطوة الثالثة: تخزين التخزين المؤقت لحزم pip
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # الخطوة الرابعة: تثبيت المكتبات المطلوبة لمشروع Django
+    - name: تثبيت المكتبات المطلوبة لمشروع Django
+      working-directory: ./backend
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # الخطوة الخامسة: تشغيل الاختبارات لمشروع Django
+    - name: تشغيل الاختبارات لمشروع Django
+      working-directory: ./backend
+      run: |
+        python manage.py test
+
+    # الخطوة السادسة: إعداد بيئة Node.js لمشروع Next.js
+    - name: إعداد بيئة Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+
+    # الخطوة السابعة: تخزين التخزين المؤقت لحزم npm
+    - name: Cache npm
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+
+    # الخطوة الثامنة: تثبيت المكتبات المطلوبة لمشروع Next.js
+    - name: تثبيت المكتبات المطلوبة لمشروع Next.js
+      working-directory: ./frontend
+      run: |
+        npm install
+
+    # الخطوة التاسعة: بناء مشروع Next.js
+    - name: بناء مشروع Next.js
+      working-directory: ./frontend
+      run: |
+        npm run build
+
+    # الخطوة العاشرة: تشغيل الاختبارات لمشروع Next.js
+    - name: تشغيل الاختبارات لمشروع Next.js
+      working-directory: ./frontend
+      run: |
+        npm run test
