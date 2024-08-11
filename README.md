@@ -49,8 +49,8 @@ Before you begin, ensure you have the following installed on your system:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your_repo_name
+   git clone https://github.com/abdulwahed-mans/school.git
+   cd school
    ```
 
 2. **Create a `.env` file for Django (optional):**
